@@ -1,0 +1,91 @@
+<!-- statiz klasorundekı dosyaları yukleyip  özelliğini kullanabilmemiz için -->
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neos Ticaret</title>
+  <!--bootstrap-->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+</head>
+
+<body>
+
+  <!--
+    block= Belli bir kod parcacıgını block etiketi içine alıp 
+    diğer sayfalarda sadece o kısımın degişmesini saglar
+    özet--  belli bir kısmı sayfaya göre değiştirilir
+  
+  include= Herhangi bir kod parcacıgını direkt olarak 
+  bir sayfaya yerleştirmemizi sağlar
+-->
+
+  {% include "includes/_navbar.html" %}
+
+  {% if messages %}
+  {% for mesaj in messages %}
+  <div class="alert alert-{{mesaj.tags}} text-center">
+    {{mesaj}}
+  </div>
+
+  {% endfor %}
+
+  {% else %}
+  {% endif %}
+
+
+  {% block content %}
+
+  <div class="container mt-3 ">
+    <div class="row">
+      {% for urun in urunler %}
+      <div class="col-4 mb-3">
+        <div class="card" style="width: 22rem;">
+          {% if urun.resim %}
+          <img src="{{urun.resim}}" height="200" class="card-img-top" alt="...">
+
+          {% else %}
+          <img src="{% static 'resim1.jpg' %}" height="200" class="card-img-top" alt="...">
+          {% endif %}
+
+          <div class="card-body">
+            <h5 class="card-title">{{urun.isim}}</h5>
+            <p class="card-text">{{urun.aciklama}}</p>
+            <p class="card-text">{{urun.fiyat}} TL</p>
+            <p>{{urun.kategori}} </p>
+            {% for alt in urun.alt.all %}
+            <small>{{alt.isim}}</small>
+
+
+            {% endfor %}
+            <br>
+            <form action="" class="d-inline-block mt-2" method="POST">
+              {% csrf_token %}
+              <input type="hidden" name="urunId" value="{{urun.id}}">
+              <input type="number" value="1" name="adet" class="form-control w-50" id="">
+              <input type="submit" value="Sepete Ekle" class="btn btn-primary mt-2">
+              <a href="{% url 'urun' urun.id %}" class="btn btn-primary mt-2">Ürünü incele</a>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      {% endfor %}
+    </div>
+  </div>
+  {% endblock content %}
+
+  {% include "includes/_footer.html" %}
+
+
+  <!--bootsrap js-->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous">
+  </script>
+</body>
+
+</html>
